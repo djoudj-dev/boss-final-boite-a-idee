@@ -7,4 +7,4 @@ export interface Idea {
 }
 
 export type IdeaStatus = 'IDEA' | 'ARCHIVED';
-export type CreateIdeaDto = Omit<Idea, 'id' | 'status' | 'createdAt'>;
+export type CreateIdeaPayload = Pick<Idea, 'title' | 'description'>;

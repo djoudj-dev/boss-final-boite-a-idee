@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CreateIdeaDto } from '../../models/idea-interface';
+import { CreateIdeaPayload } from '../../models/idea-interface';
 
 type IdeaFormValue = {
   title: FormControl<string>;
@@ -120,7 +120,7 @@ type IdeaFormValue = {
   `,
 })
 export class IdeaForm {
-  ideaSubmitted = output<CreateIdeaDto>();
+  ideaSubmitted = output<CreateIdeaPayload>();
 
   protected readonly ideaForm = new FormGroup<IdeaFormValue>({
     title: new FormControl<string>('', {

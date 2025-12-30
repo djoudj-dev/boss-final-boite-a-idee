@@ -1,60 +1,161 @@
-# BossFinalBoiteAIdee
+# Boîte à Idées
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.7.
+Application Angular de gestion d'idées permettant de créer, lister et archiver vos idées (cadeaux, projets, posts réseaux sociaux, etc.).
 
-## Development server
+## À propos du projet
 
-To start a local development server, run:
+Ce projet est le **boss de fin** de la formation EAK (Easy Angular Kit) sur les fondamentaux d'Angular. Il met en pratique l'ensemble des concepts appris au cours de 8 exercices progressifs.
 
-```bash
-ng serve
+### Parcours d'apprentissage
+
+Ce projet est le résultat d'un parcours d'apprentissage structuré couvrant les fondamentaux d'Angular :
+
+1. **Mon premier composant** - Création et utilisation de composants Angular
+2. **Styliser mon composant** - Gestion des styles avec `:host` et CSS scoped
+3. **Variabiliser son template** - Interpolation et binding de données
+4. **Communication entre composants (1/2)** - Utilisation des `@Input()` | `input<>` pour passer des données
+5. **Communication entre composants (2/2)** - Utilisation des `@Output()` | `output<>` pour émettre des événements
+6. **Control flow** - Conditions `@if`, boucles `@for`, et directives de contrôle
+7. **Mon premier service** - Création de services injectables et gestion d'état
+8. **Mon premier formulaire en ReactiveForms** - Création de formulaires réactifs avec validation
+
+## Fonctionnalités
+
+- ✨ **Créer une idée** avec un titre et une description
+- 📝 **Lister toutes les idées** avec tri automatique (actives puis archivées)
+- 📦 **Archiver les idées** réalisées ou obsolètes
+- 🎨 **Interface responsive** avec distinction visuelle des idées archivées
+
+## Technologies utilisées
+
+- **Angular 20.3** - Framework frontend
+- **TypeScript** - Langage typé
+- **Signals** - Gestion d'état réactive (nouvelle API Angular)
+- **Reactive Forms** - Gestion des formulaires avec validation
+- **Standalone Components** - Architecture moderne sans NgModules
+
+## Architecture du projet
+
+```
+src/app/
+├── components/
+│   ├── idea-form.ts       # Formulaire de création d'idée
+│   └── idea-list.ts       # Liste et affichage des idées
+├── models/
+│   └── idea.ts            # Interfaces et types (Idea, IdeaStatus, CreateIdeaPayload)
+├── services/
+│   └── idea-in-memory.ts  # Service de gestion des idées avec Signals
+└── app.ts                 # Composant racine
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Bonnes pratiques appliquées
 
-## Code scaffolding
+#### 🏗️ Architecture
+- **Composants Single File Component (SFC)** - Code concis avec template et styles inline
+- **Suppression des divs wrappers** - Utilisation de `:host` pour un DOM optimisé
+- **Services injectables** - Séparation de la logique métier et de la présentation
+- **Signals computed** - Propriétés réactives calculées automatiquement
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+#### 🎨 Styles
+- **Unités rem** - Accessibilité et responsive design
+- **Variables CSS** - Thème cohérent et maintenable
+- **Styles scopés** - Pas de conflits avec `:host`
 
-```bash
-ng generate component component-name
-```
+#### ⚡ Performance
+- **ChangeDetection.OnPush** - Optimisation du cycle de détection
+- **Signals** - Réactivité fine et performante
+- **Computed values** - Calculs mis en cache automatiquement
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Installation
 
-```bash
-ng generate --help
-```
+### Prérequis
+- Node.js (v18+)
+- npm ou pnpm
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Étapes
 
 ```bash
-ng test
+# Cloner le repository
+git clone <url-du-repo>
+
+# Installer les dépendances
+npm install
+
+# Lancer le serveur de développement
+npm start
 ```
 
-## Running end-to-end tests
+L'application sera accessible sur `http://localhost:4200/`
 
-For end-to-end (e2e) testing, run:
+## Scripts disponibles
 
 ```bash
-ng e2e
+npm start          # Lance le serveur de développement
+npm run build      # Build de production
+npm run watch      # Build en mode watch
+npm test           # Lance les tests unitaires
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Modèle de données
 
-## Additional Resources
+### Interface Idea
+```typescript
+interface Idea {
+  id: string;
+  title: string;
+  description: string;
+  status: 'IDEA' | 'ARCHIVED';
+  createdAt: Date;
+}
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### CreateIdeaPayload
+```typescript
+type CreateIdeaPayload = Pick<Idea, 'title' | 'description'>;
+```
+
+## Composants
+
+### IdeaForm
+Formulaire réactif de création d'idée avec :
+- Validation du titre (requis, min 3 caractères)
+- Validation de la description (requis, min 10 caractères)
+- Émission d'événement `ideaSubmitted` au parent
+
+### IdeaList
+Affichage de la liste des idées avec :
+- Tri automatique (actives en premier, puis archivées par date)
+- Distinction visuelle des idées archivées (opacité, titre barré)
+- Bouton d'archivage (masqué pour les idées déjà archivées)
+- Compteur d'idées dans le titre
+- Message d'état vide si aucune idée
+
+## Service IdeaInMemory
+
+Service singleton gérant l'état des idées avec :
+- `ideas` - Signal computed des idées triées
+- `ideasCount` - Nombre total d'idées
+- `activeIdeasCount` - Nombre d'idées actives
+- `archivedIdeasCount` - Nombre d'idées archivées
+- `addIdea()` - Ajout d'une nouvelle idée
+- `archiveIdea()` - Archivage d'une idée
+
+## Améliorations possibles
+
+- 🗄️ Persistance locale (LocalStorage)
+- 🔍 Recherche et filtres
+- ✏️ Édition d'idées
+- 🗑️ Suppression définitive
+- 🏷️ Catégories/tags
+- 📊 Statistiques
+
+## Ressources
+
+- [Documentation Angular](https://angular.dev)
+- [EAK - Easy Angular Kit](https://github.com/your-repo)
+- [Démo en ligne](https://stackblitz.com/edit/stackblitz-starters-wyx7cv24)
+
+## Licence
+
+MIT
 # boss-final-boite-a-idee
