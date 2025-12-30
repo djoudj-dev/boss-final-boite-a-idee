@@ -152,8 +152,7 @@ Service singleton gérant l'état des idées avec :
 ## Ressources
 
 - [Documentation Angular](https://angular.dev)
-- [EAK - Easy Angular Kit](https://github.com/your-repo)
-- [Démo en ligne](https://stackblitz.com/edit/stackblitz-starters-wyx7cv24)
+- [EAK - Easy Angular Kit](https://easyangularkit.com?via=djoudj)
 
 ## Licence
 
