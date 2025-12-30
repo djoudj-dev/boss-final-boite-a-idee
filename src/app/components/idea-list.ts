@@ -1,39 +1,45 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Idea } from '../../models/idea-interface';
-import { isIdeaArchived } from '../../utils/idea';
+import { Idea } from '../models/idea';
 
 @Component({
   selector: 'app-idea-list',
   imports: [DatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="card">
-      <h2>📝 Mes idées ({{ ideas().length }})</h2>
+    @let _ideas = ideas();
 
-      @if (ideas().length === 0) {
-      <p class="empty">Aucune idée pour le moment</p>
-      } @else {
-      <div class="grid">
-        @for (idea of ideas(); track idea.id) {
-        <article class="idea" [class.archived]="isArchived(idea)">
-          <h3>{{ idea.title }}</h3>
-          <p>{{ idea.description }}</p>
+    <h2>📝 Mes idées ({{ ideas().length }})</h2>
 
-          <footer>
-            <time>{{ idea.createdAt | date : 'dd/MM/yyyy' }}</time>
-            @if (!isArchived(idea)) {
-            <button (click)="onArchive(idea.id)">📦 Archiver</button>
-            }
-          </footer>
-        </article>
-        }
-      </div>
+    @if (_ideas.length === 0) {
+    <p class="empty">Aucune idée pour le moment</p>
+    } @else {
+    <div class="grid">
+      @for (idea of _ideas; track idea.id) {
+      <article class="idea" [class.archived]="idea.status === 'ARCHIVED'">
+        <h3>{{ idea.title }}</h3>
+        <p>{{ idea.description }}</p>
+
+        <footer>
+          <time>{{ idea.createdAt | date : 'dd/MM/yyyy' }}</time>
+          @if (idea.status !== 'ARCHIVED') {
+          <button (click)="onArchive(idea.id)">📦 Archiver</button>
+          }
+        </footer>
+      </article>
       }
     </div>
+    }
   `,
   styles: `
   :host {
+    display: block;
+    background: white;
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+
     h2 {
       margin-bottom: 1.5rem;
       color: var(--text);
@@ -112,10 +118,8 @@ import { isIdeaArchived } from '../../utils/idea';
   `,
 })
 export class IdeaList {
-  ideas = input.required<Idea[]>();
-  archiveIdea = output<string>();
-
-  protected readonly isArchived = isIdeaArchived;
+  readonly ideas = input.required<Idea[]>();
+  readonly archiveIdea = output<string>();
 
   protected onArchive(ideaId: string): void {
     this.archiveIdea.emit(ideaId);

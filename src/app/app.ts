@@ -1,31 +1,28 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { IdeaForm } from './components/idea-form/idea-form';
-import { IdeaList } from './components/idea-list/idea-list';
+import { IdeaForm } from './components/idea-form';
+import { IdeaList } from './components/idea-list';
 import { IdeaInMemory } from './services/idea-in-memory';
-import { CreateIdeaDto } from './models/idea-interface';
+import { CreateIdeaPayload } from './models/idea';
 
 @Component({
   selector: 'app-root',
   imports: [IdeaForm, IdeaList],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="container">
-      <header>
-        <h1>🎯 Boîte à Idées</h1>
-      </header>
+    <header>
+      <h1>🎯 Boîte à Idées</h1>
+    </header>
 
-      <app-idea-form (ideaSubmitted)="handleIdeaSubmitted($event)" />
+    <app-idea-form (ideaSubmitted)="createIdea($event)" />
 
-      <app-idea-list [ideas]="ideaService.getIdeas()()" (archiveIdea)="handleArchiveIdea($event)" />
-    </div>
+    <app-idea-list [ideas]="ideaService.ideas()" (archiveIdea)="archiveIdea($event)" />
   `,
   styles: `
   :host {
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-    }
+    display: block;
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
 
     header {
       text-align: center;
@@ -42,11 +39,11 @@ import { CreateIdeaDto } from './models/idea-interface';
 export class App {
   protected readonly ideaService = inject(IdeaInMemory);
 
-  protected handleIdeaSubmitted(ideaData: CreateIdeaDto): void {
+  protected createIdea(ideaData: CreateIdeaPayload): void {
     this.ideaService.addIdea(ideaData);
   }
 
-  protected handleArchiveIdea(ideaId: string): void {
+  protected archiveIdea(ideaId: string): void {
     this.ideaService.archiveIdea(ideaId);
   }
 }

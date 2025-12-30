@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CreateIdeaPayload } from '../../models/idea-interface';
+import { CreateIdeaPayload } from '../models/idea';
 
 type IdeaFormValue = {
   title: FormControl<string>;
@@ -12,42 +12,47 @@ type IdeaFormValue = {
   imports: [ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="card">
-      <h2>💡 Nouvelle idée</h2>
+    <h2>💡 Nouvelle idée</h2>
 
-      <form [formGroup]="ideaForm" (ngSubmit)="onSubmit()">
-        <div class="field">
-          <label for="title"> Titre <span class="required">*</span> </label>
-          <input
-            id="title"
-            type="text"
-            formControlName="title"
-            placeholder="Ex: Cadeau pour maman"
-          />
-          @if (ideaForm.controls.title.invalid && ideaForm.controls.title.touched) {
-          <p class="error">Le titre est requis (min. 3 caractères)</p>
-          }
-        </div>
+    <form [formGroup]="ideaForm" (ngSubmit)="onSubmit()">
+      <div class="field">
+        <label for="title"> Titre <span class="required">*</span> </label>
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          placeholder="Ex: Cadeau pour maman"
+        />
+        @if (ideaForm.controls.title.invalid && ideaForm.controls.title.touched) {
+        <p class="error">Le titre est requis (min. 3 caractères)</p>
+        }
+      </div>
 
-        <div class="field">
-          <label for="description"> Description <span class="required">*</span> </label>
-          <textarea
-            id="description"
-            formControlName="description"
-            rows="4"
-            placeholder="Décris ton idée..."
-          ></textarea>
-          @if (ideaForm.controls.description.invalid && ideaForm.controls.description.touched) {
-          <p class="error">La description est requise (min. 10 caractères)</p>
-          }
-        </div>
+      <div class="field">
+        <label for="description"> Description <span class="required">*</span> </label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="4"
+          placeholder="Décris ton idée..."
+        ></textarea>
+        @if (ideaForm.controls.description.invalid && ideaForm.controls.description.touched) {
+        <p class="error">La description est requise (min. 10 caractères)</p>
+        }
+      </div>
 
-        <button type="submit" [disabled]="ideaForm.invalid">✨ Ajouter l'idée</button>
-      </form>
-    </div>
+      <button type="submit" [disabled]="ideaForm.invalid">✨ Ajouter l'idée</button>
+    </form>
   `,
   styles: `
   :host {
+    display: block;
+    background: white;
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+
     h2 {
       margin-bottom: 1.5rem;
       color: var(--text);
@@ -120,14 +125,14 @@ type IdeaFormValue = {
   `,
 })
 export class IdeaForm {
-  ideaSubmitted = output<CreateIdeaPayload>();
+  readonly ideaSubmitted = output<CreateIdeaPayload>();
 
   protected readonly ideaForm = new FormGroup<IdeaFormValue>({
-    title: new FormControl<string>('', {
+    title: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(3)],
     }),
-    description: new FormControl<string>('', {
+    description: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(10)],
     }),
